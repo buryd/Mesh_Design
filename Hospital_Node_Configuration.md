@@ -4,10 +4,11 @@
 | Field | Value |
 |-------|--------|
 | Role | Spoke / client node |
-| Band | 420–450 MHz |
+| Band | 420–450 MHz (**standard ham / 70 cm** radios) |
+| Hub apps | **FreePBX** · **MeshChat** · **Citadel** at EOC |
 | Hub | EOC Kathleen (`10.40.0.0/24`) |
 | Isolation | **Air-gapped** — no Internet / no EHR or production-LAN bridge |
-| Related docs | `420-450MHz_RF_Mesh_Architecture.md`, `EOC_Node_Configuration.md` |
+| Related docs | `420-450MHz_RF_Mesh_Architecture.md`, `EOC_Node_Configuration.md`, hospital BOMs |
 
 Use this procedure at **both** hospital sites. Only the **subnet, aiming azimuth, and site name** change.
 
@@ -17,11 +18,11 @@ Use this procedure at **both** hospital sites. Only the **subnet, aiming azimuth
 
 Configure each hospital so that:
 
-- Continuity **VoIP phones, chat PCs, and mail clients** join a **hospital enclave subnet**  
-- That subnet reaches **EOC-hosted** SIP, chat, and email over the RF mesh  
+- Continuity **FreePBX softphones, MeshChat, and Citadel** clients join a **hospital enclave subnet**  
+- That subnet reaches **EOC-hosted FreePBX / MeshChat / Citadel** over the RF mesh  
 - The hospital node **never** bridges into EHR/clinical LAN, guest Wi‑Fi, or the Internet  
 
-Hospitals **do not** host the VoIP/chat/email servers — they host **clients only**.
+Hospitals **do not** host FreePBX, MeshChat, or Citadel servers — they host **clients only**.
 
 ---
 
@@ -41,16 +42,16 @@ Hospitals **do not** host the VoIP/chat/email servers — they host **clients on
 
 | Item | Function |
 |------|----------|
-| Roof mast | Antenna height |
-| Yagi 10–14 dBi (420–450 MHz) | Directed link to EOC |
-| 420–450 MHz mesh IP radio | Wireless IP transport |
-| Hardline, polyphaser, ground | RF plant |
+| Roof mast (optional BOM) | Antenna height |
+| Ham Yagi 420–450 MHz | Directed link to EOC |
+| Standard ham 70 cm radio | UHF link to EOC |
+| Coax, arrestor, ground | RF plant |
 | Edge router / firewall | Gateway, **DHCP**, QoS, air gap |
-| Small PoE switch | Enclave VLAN only |
-| UPS + PoE/DC plant | Power |
-| Softphones / ATAs | VoIP clients |
-| PCs / thin clients | Chat + internal webmail |
-| Optional 2nd Yagi + radio | Only if WR↔Perry backup path is built |
+| Small GbE switch | Enclave VLAN only |
+| UPS | Power |
+| Softphones / ATAs | **FreePBX** clients |
+| PCs / thin clients | **MeshChat** + **Citadel** |
+| Optional 2nd ham radio + Yagi | Only if WR↔Perry backup path is built |
 
 ---
 
@@ -58,7 +59,7 @@ Hospitals **do not** host the VoIP/chat/email servers — they host **clients on
 
 - [ ] Facilities / Biomed approval for roof mast and RF install  
 - [ ] Confirmed **no** trunk/patch into EHR or hospital Internet edge  
-- [ ] Frequency authorization matches EOC channel plan  
+- [ ] Ham / authorized frequencies match EOC channel plan (Part 97 or other)  
 - [ ] EOC hub already configured (or coordinated cutover window)  
 - [ ] IP plan for this site filled (§5)  
 - [ ] Continuity room/locations identified for phones and PCs  
@@ -125,36 +126,36 @@ Hospitals **do not** host the VoIP/chat/email servers — they host **clients on
    - Deny public Internet ranges  
 8. QoS toward RF: VoIP (SIP/RTP) > chat > control > email (rate-limit).
 
-### Step 3 — Mesh radio
+### Step 3 — Ham UHF radio
 
-1. Match EOC **mesh ID / channel** in **420–450 MHz**.  
-2. Set Ethernet IP to site `.2` (WR `10.40.1.2` / Perry `10.40.2.2`) or vendor bridge mode per design.  
-3. Align Yagi to EOC; record RSSI/SNR.  
-4. Authenticate/admin-lock the radio; no open join.  
-5. Confirm ping to EOC mesh peer and to `10.40.0.1`.
+1. Match EOC **420–450 MHz** frequency/mode plan.  
+2. If using radio–IP gateway, set Ethernet IP to site `.2` (WR `10.40.1.2` / Perry `10.40.2.2`).  
+3. Align Yagi to EOC (if antenna work performed); record signal.  
+4. Only licensed/authorized operators transmit.  
+5. Confirm reachability to EOC gateway `10.40.0.1` and FreePBX `10.40.0.10`.
 
 ### Step 4 — Enclave switch
 
 1. Create/use VLAN dedicated to mesh continuity.  
-2. Connect: router LAN, radio Ethernet, phones, PCs, UPS mgmt (optional).  
+2. Connect: router LAN, radio/gateway Ethernet, phones, PCs, UPS mgmt (optional).  
 3. **Do not** uplink this VLAN to hospital core / EHR.  
 4. Label ports clearly.
 
-### Step 5 — VoIP phones / ATAs
+### Step 5 — FreePBX phones / ATAs
 
 1. Connect phone to enclave switch.  
 2. Phone obtains IP by **DHCP from hospital edge router** (or rare static in client range).  
-3. Set SIP server to EOC PBX: `pbx.mesh.local` or `10.40.0.10`.  
+3. Set SIP server to **FreePBX**: `pbx.mesh.local` or `10.40.0.10`.  
 4. Enter extension/credentials issued by EOC.  
 5. Codec preference: Opus or G.729.  
-6. Verify registration **through RF** to EOC (not to any hospital PBX).
+6. Verify registration **through RF** to EOC FreePBX (not to any hospital PBX).
 
-### Step 6 — Chat & email clients
+### Step 6 — MeshChat & Citadel clients
 
 1. Connect PC to enclave switch only (or enclave-only NIC).  
 2. Confirm DHCP address on hospital enclave subnet.  
-3. Chat client → `chat.mesh.local` / `10.40.0.11`.  
-4. Webmail → `mail.mesh.local` / `10.40.0.12`.  
+3. **MeshChat** → `chat.mesh.local` / `10.40.0.11`.  
+4. **Citadel** → `mail.mesh.local` / `10.40.0.12`.  
 5. Confirm DNS queries go to `10.40.0.13` (EOC).  
 6. Disable OS auto-update to Internet; use offline patch SOP.
 
@@ -173,12 +174,12 @@ Only if authorized:
 
 | Service | Where it runs |
 |---------|----------------|
-| SIP PBX | **EOC only** |
-| Chat server | **EOC only** |
-| Mail server | **EOC only** |
+| FreePBX | **EOC only** |
+| MeshChat | **EOC only** |
+| Citadel | **EOC only** |
 | Authoritative DNS / NTP | **EOC only** |
 
-Hospital gear = **clients + edge router + radio + switch + UPS**.
+Hospital gear = **clients + edge router + ham radio + switch + UPS**.
 
 ---
 
@@ -190,18 +191,18 @@ Hospital gear = **clients + edge router + radio + switch + UPS**.
 - [ ] Phone DNS = EOC `10.40.0.13`  
 - [ ] Cannot browse public websites from enclave PC  
 - [ ] Cannot reach hospital clinical subnets from enclave PC  
-- [ ] Softphone registers to EOC PBX only  
+- [ ] Softphone registers to EOC **FreePBX** only  
 
 ---
 
 ## 9. Acceptance tests (per hospital)
 
-1. Ping EOC gateway `10.40.0.1` and PBX `10.40.0.10`.  
+1. Ping EOC gateway `10.40.0.1` and FreePBX `10.40.0.10`.  
 2. Softphone registers; call EOC continuity phone.  
-3. Second call while chat message sent — voice stays usable.  
-4. Send internal email to EOC mailbox; confirm delivery; confirm **no** Internet send.  
+3. Second call while **MeshChat** message sent — voice stays usable.  
+4. Send **Citadel** mail to EOC mailbox; confirm delivery; confirm **no** Internet send.  
 5. Fail RF briefly — document recovery when link returns.  
-6. Log RSSI/SNR and leave copy at EOC and hospital.
+6. Log signal reports and leave copy at EOC and hospital.
 
 ---
 
@@ -231,9 +232,9 @@ Phone → Enclave switch → Hospital edge router (DHCP)
                      GW  = 10.40.x.1
                      DNS = 10.40.0.13 (EOC)
                               ↓
-                     SIP register → 10.40.0.10 (EOC PBX) via mesh radio
+                     SIP register → 10.40.0.10 (FreePBX @ EOC) via ham UHF / IP path
 ```
 
 ---
 
-*Hospital spoke configuration — air-gapped 420–450 MHz RF mesh*
+*Hospital spoke configuration — air-gapped ham 420–450 MHz · FreePBX / MeshChat / Citadel*

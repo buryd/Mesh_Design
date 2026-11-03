@@ -4,11 +4,11 @@
 | Field | Value |
 |-------|--------|
 | Sites | EOC (Kathleen), Emory Hospital Warner Robins, Emory Hospital Perry |
-| Band | **420–450 MHz** (licensed / authorized UHF; coordinate exact channels) |
+| Band | **420–450 MHz** (**standard ham / 70 cm** radios; Part 97 or other lawful authority) |
 | Topology | Hub-and-spoke RF mesh with optional cross-link |
 | Isolation | **Air-gapped** — no Internet, cloud, or production-LAN dependency |
-| Apps | VoIP, Chat, Email (internal only) |
-| Version | 1.2 |
+| Apps | **FreePBX** · **MeshChat** · **Citadel** (internal only) |
+| Version | 1.3 |
 | Date | 2026-03-11 |
 
 ---
@@ -42,7 +42,7 @@ for **voice (VoIP)**, **chat**, and **email** on a **standalone air-gapped** net
 ```
                     ┌─────────────────────────────────────┐
                     │  EOC Kathleen (HUB + APPS) AIR GAP  │
-                    │  SIP PBX · Chat · Mail · NMS        │
+                    │  FreePBX · MeshChat · Citadel · NMS │
                     │  Edge Router (QoS) · UPS/Gen        │
                     │  420–450 MHz Mesh Node              │
                     │  Yagi→WR | Yagi→Perry | Omni fill   │
@@ -68,7 +68,7 @@ for **voice (VoIP)**, **chat**, and **email** on a **standalone air-gapped** net
 | **L1 RF Mesh** | 420–450 MHz IP mesh radios, antennas |
 | **L2/L3 Transport** | Bridged or routed mesh; site subnets |
 | **L4 Security** | Enclave firewall; optional mesh-internal IPsec; **no** Internet gateway |
-| **L5 Apps** | On-prem SIP VoIP, chat, email (**internal only**) |
+| **L5 Apps** | On-prem **FreePBX**, **MeshChat**, **Citadel** (**internal only**) |
 | **L6 Ops** | Offline monitoring, spares, SOP, sneaker-net updates |
 
 ---
@@ -107,21 +107,20 @@ for **voice (VoIP)**, **chat**, and **email** on a **standalone air-gapped** net
 
 ### 5.1 Band and licensing
 
-- **Operating band:** **420–450 MHz** only (tune/order radios and antennas for this range).  
-- **Planning center frequency:** **435 MHz** (mid-band) for link-budget and antenna VSWR checks; final channels per authorization.  
-- **Prefer:** spectrally efficient UHF IP/mesh radios certified for **420–450 MHz** (wider channel or MIMO UHF) over single 12.5 kHz FM if multi-call VoIP is required.  
-- **Authorization:** obtain lawful authority before transmit — this segment includes **federal** and **amateur (70 cm)** allocations; Houston County must use channels it is eligible to hold (e.g., federal/NTIA assignment, appropriate FCC license, or other approved sharing). Document **call sign / agency ID, exact frequencies, bandwidth, max EIRP**.  
-- **Do not** operate on amateur spectrum under Part 97 for this governmental mesh unless a separate, lawful amateur-aux plan is explicitly approved (out of scope for hospital/EOC continuity).
+- **Operating band:** **420–450 MHz** (70 cm) using **standard ham radios**.  
+- **Planning center frequency:** **435 MHz** (mid-band) for antenna checks; final channels per authorization.  
+- **Authorization:** typically **Part 97** amateur licenses / club station (or other lawful authority). Document **call signs, frequencies, power**. Only licensed/authorized operators transmit.  
+- Expect **narrow** capacity vs commercial IP microwave — size FreePBX codecs and Citadel attachments accordingly.
 
 ### 5.2 Radio plant (per fixed site)
 
 | Item | Specification |
 |------|----------------|
-| Radio | Outdoor **420–450 MHz** IP mesh / fixed wireless router (authorized service) |
-| TX power | Up to **5 W (37 dBm)** subject to authorization |
-| Duplex | As supported (TDD mesh typical) |
-| Interfaces | Ethernet to site router; PoE or DC |
-| Environmental | IP67-class outdoor or radio in NEMA enclosure |
+| Radio | Standard **ham 70 cm / 420–450 MHz** mobile or base |
+| TX power | Per radio / license (often ≤ 50 W; use minimum needed) |
+| Duplex | Per design (simplex or linked) |
+| Interfaces | Speaker/mic and/or radio–IP gateway to enclave Ethernet |
+| Environmental | Indoor base or weatherproofed outdoor as installed |
 
 ### 5.3 Antennas and height AGL
 
@@ -196,32 +195,32 @@ Assumes 5 W, ~11–12 dBi Yagis tuned for **420–450 MHz**, ~4.5 dB total line/
 
 | Application | Primary host | Hospital clients |
 |-------------|--------------|------------------|
-| **SIP PBX / registrar** | EOC (on-prem only) | Softphones or ATAs on enclave VLAN |
-| **Chat server** | EOC (on-prem only) | Desktop clients on enclave VLAN |
-| **Email** | EOC internal mail / webmail | Enclave-only accounts (no Internet SMTP) |
+| **FreePBX** | EOC (on-prem only) | Softphones or ATAs on enclave VLAN |
+| **MeshChat** | EOC (on-prem only) | Browser/clients on enclave VLAN |
+| **Citadel** | EOC (on-prem only) | Enclave-only mail (no Internet SMTP) |
 | **DNS / NTP / CA** | EOC local | Hospitals use EOC only |
 
-### 7.2 VoIP
+### 7.2 VoIP — FreePBX
 
+- Platform: **FreePBX** (Asterisk) at EOC.  
 - Codec: **Opus 16–24 kbps** or **G.729**.  
-- Concurrent calls: design for **2–4** across the mesh.  
+- Concurrent calls: design for **1–3** on ham UHF paths.  
 - QoS: DSCP **EF** for RTP; prioritize SIP signaling.  
-- Media: prefer **hospital phone ↔ EOC PBX** (one RF hop). Avoid phone-to-phone hairpin across two RF hops when possible.  
-- Survivability: EOC PBX on UPS/gen; optional FXO/FXS to radio patch only if required by SOP.
+- Media: prefer **hospital phone ↔ FreePBX** (one RF hop).  
+- Survivability: FreePBX host on UPS.
 
-### 7.3 Chat
+### 7.3 Chat — MeshChat
 
-- Lightweight self-hosted stack (e.g. Mattermost / Matrix / XMPP).  
-- Disable rich media / large file transfer on RF SSID.  
+- Platform: **MeshChat** at EOC.  
+- Disable Internet federation; limit file transfer size.  
 - Keep presence refresh conservative.
 
-### 7.4 Email
+### 7.4 Email — Citadel
 
-- **Store-and-forward** at EOC.  
+- Platform: **Citadel** at EOC (store-and-forward).  
 - Size limits (e.g. 1–5 MB); strip/block large attachments on RF path.  
-- Queue and send when voice load is low; never starve RTP.  
-- Optional: enclave webmail only (less chatty than sync IMAP).  
-- **No** outbound SMTP/IMAP to the public Internet.
+- Prefer web access over chatty sync clients.  
+- **No** outbound SMTP to the public Internet.
 
 ### 7.5 QoS policy (edge routers)
 
@@ -299,18 +298,17 @@ If licensed channel only supports tens of kbps: **1 VoIP + chat**; email off-pea
 
 | Qty | Item |
 |-----|------|
-| 3 | **420–450 MHz** outdoor mesh/IP radios (fixed) |
-| 1 | Spare radio (420–450 MHz) |
-| 4–5 | Yagi antennas 10–14 dBi, **420–450 MHz** (incl. spare) |
-| 1 | Omni 5–8 dBi, **420–450 MHz** (EOC optional) |
-| 3 | Edge firewall/routers with QoS |
-| 3 | UPS systems (EOC sized for gen transfer) |
-| Lot | Hardline, grounding, polyphasers, NEMA, masts |
-| 1 | SIP PBX + chat server + mail relay (EOC VMs/appliances) |
-| Lot | Softphones/ATAs for continuity positions |
-| 1 | NMS / logging |
+| 4+ | Standard **ham 70 cm** radios (EOC×2+, WR, Perry, spare) |
+| 4–5 | Ham Yagi antennas **420–450 MHz** |
+| 1 | Ham omni (EOC optional) |
+| 3 | Edge firewall/routers with QoS + DHCP |
+| 3 | UPS (small) |
+| Lot | Coax, grounding, arrestors; **antenna install optional** per BOM |
+| 1–2 | Mini PCs: **FreePBX**, **MeshChat**, **Citadel** (may share) |
+| Lot | Softphones/ATAs + client PCs |
+| 1 | NMS / logging (optional) |
 
-*Exact vendor SKUs depend on certification for **420–450 MHz**, lawful channel assignment, and channel width available to Houston County.*
+*See priced BOMs: antenna work and labor are optional; apps are FreePBX / MeshChat / Citadel.*
 
 ---
 
@@ -322,7 +320,7 @@ If licensed channel only supports tens of kbps: **1 VoIP + chat**; email off-pea
 | Narrow channel only | Cannot multi-call | Efficient codecs; limit calls; seek wider authorization |
 | Hospital RF/EMI restrictions | Delay install | Early Biomed engagement |
 | License / EIRP cap | Lower margin | Higher antennas/gain; lower data rate modes |
-| No eligible **420–450 MHz** channels | Cannot transmit legally | Confirm federal/FCC eligibility before procurement |
+| No licensed/authorized operators | Cannot transmit legally | Confirm Part 97 (or other) authority before RF |
 | Mesh relay path | Latency hurts VoIP | Prefer hub paths; relay = chat/backup voice |
 | Air-gap breach (Internet/prod LAN plugged in) | Enclave compromise | Locked configs, sealed ports, audit SOP |
 | Sensitive data on island | Policy/compliance failure | Enclave-only endpoints; no EHR bridge; training |
@@ -334,8 +332,8 @@ If licensed channel only supports tens of kbps: **1 VoIP + chat**; email off-pea
 | Phase | Scope | Outcome |
 |-------|--------|---------|
 | **A** | Path survey + temporary mast test EOC↔WR and EOC↔Perry | Go/no-go on heights |
-| **B** | Permanent RF + routers + SIP/chat at EOC; 1 client each hospital | VoIP + chat live |
-| **C** | Email relay + QoS hardening + monitoring | Full app set |
+| **B** | Permanent RF + routers + FreePBX/MeshChat at EOC; 1 client each hospital | VoIP + chat live |
+| **C** | Citadel + QoS hardening + monitoring | Full app set |
 | **D** | Optional WR↔Perry Yagis + portable omni kit | Failover + tactical |
 
 ---
@@ -344,13 +342,13 @@ If licensed channel only supports tens of kbps: **1 VoIP + chat**; email off-pea
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Band | **420–450 MHz** authorized UHF | Range/foliage; no Internet-dependent SAS/cloud spectrum |
+| Band | Ham **420–450 MHz** | Standard 70 cm radios; Part 97 (or other) |
 | Topology | EOC hub mesh | Geography; app centralization |
 | Isolation | **Air-gapped** | Continuity without Internet or prod LAN |
-| Antennas | Yagi primary | Link budget at 7–10 mi |
-| Apps host | EOC on-prem | One RF hop; no cloud apps |
-| Email | Internal store-and-forward | Protect VoIP; no Internet mail |
-| 5.8/CBRS | Out of scope | Would not stay air-gapped if cloud/SAS required |
+| Antennas | Yagi materials in base; **install optional** | Per BOM packages A–D |
+| Apps | **FreePBX · MeshChat · Citadel** | OSS on EOC; clients at hospitals |
+| Email | Citadel store-and-forward | Protect VoIP; no Internet mail |
+| Labor | **Optional** in BOM | Volunteer / in-house possible |
 
 ---
 
@@ -358,8 +356,8 @@ If licensed channel only supports tens of kbps: **1 VoIP + chat**; email off-pea
 
 - Stable EOC↔WR and EOC↔Perry RF with ≥ **20 dB** planning margin class after survey.  
 - **≥ 2** concurrent narrowband VoIP calls hub-spoke with acceptable MOS.  
-- Chat usable during those calls.  
-- Email delivers via EOC queue without dropping calls.  
+- **MeshChat** usable during those calls.  
+- **Citadel** mail delivers via EOC without dropping FreePBX calls.  
 - Documented SOP and weekly test completed.  
 - **Air-gap verification:** no Internet route, no prod-LAN bridge, enclave-only name resolution and apps.
 
@@ -378,4 +376,4 @@ If licensed channel only supports tens of kbps: **1 VoIP + chat**; email off-pea
 
 ---
 
-*End of architecture — 420–450 MHz air-gapped RF Mesh (3-site).*
+*End of architecture — ham 420–450 MHz air-gapped RF Mesh · FreePBX / MeshChat / Citadel (3-site).*

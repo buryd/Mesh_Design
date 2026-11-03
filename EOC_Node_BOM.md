@@ -4,103 +4,117 @@
 | Field | Value |
 |-------|--------|
 | Node | EOC Kathleen — Hub + Apps |
-| Band | 420–450 MHz air-gapped mesh |
+| Band | 420–450 MHz (standard **ham / 70 cm** radios) |
+| Apps | **FreePBX** · **MeshChat** · **Citadel** email |
 | Estimate class | Planning / budgetary (±30%) |
 | Currency | USD |
 | Date | 2026-03-11 |
-| Related | `EOC_Node_Configuration.md`, `420-450MHz_RF_Mesh_Architecture.md` |
+| Related | `EOC_Node_Configuration.md`, `BOM_Totals.md` |
 
-Prices are **street/catalog planning figures**, not vendor quotes. Labor is **loaded** (wages + burden).
+**Base total = hardware + software hosts only.**  
+**Antenna work** and **labor** are **OPTIONAL** add-ons (see §5–§6).
+
+> Licensing note: standard ham radios imply **Part 97** (or other lawful authority). Confirm operators/licenses before transmit; governmental air-gap use may require a separate authorization path.
 
 ---
 
-## 1. Hardware & materials
+## 1. Base hardware (REQUIRED)
 
 | Qty | Item | Unit $ | Extended $ | Notes |
 |----:|------|-------:|-----------:|-------|
-| 1 | Tower / mast system (100–150 ft AGL class) | 18,000 | **18,000** | New or lease space on existing; site-dependent |
-| 2 | Yagi antenna 10–12 dBi (420–450 MHz) | 350 | **700** | Aim WR & Perry |
-| 1 | Omni collinear 5–8 dBi (optional) | 400 | **400** | Portable fill |
-| 1 | 420–450 MHz outdoor mesh IP radio | 4,500 | **4,500** | Authorized UHF IP/mesh class |
-| 1 | Hardline, connectors, polyphasers, grounding kit | 2,800 | **2,800** | ½″/⅞″ plant |
-| 1 | Edge router / firewall (QoS, DHCP) | 1,800 | **1,800** | No Internet WAN |
-| 1 | Managed PoE switch (8–24 port) | 450 | **450** | Enclave only |
-| 1 | PoE / DC power plant | 350 | **350** | Radio power |
-| 1 | SIP PBX appliance or server | 2,200 | **2,200** | On-prem VoIP |
-| 1 | Chat + internal mail host (server/VM host) | 1,800 | **1,800** | May be one box w/ PBX at lower cost |
-| 1 | Local DNS/NTP/NMS (may share host) | 400 | **400** | Incremental if shared ≈ $0–400 |
-| 1 | UPS (rack/tower, enclave runtime) | 1,200 | **1,200** | |
-| 1 | Generator transfer / circuit work allowance | 3,500 | **3,500** | If circuit exists, reduce |
-| 2 | Continuity workstations | 900 | **1,800** | Softphone/chat/mail |
-| 2 | Softphone licenses / ATA | 120 | **240** | |
-| 1 | NEMA / ice bridge / cable entry kit | 900 | **900** | |
-| 1 | Spares held at EOC (radio PSU, injectors) | 600 | **600** | Site stock |
+| 2 | Ham 70 cm / 420–450 MHz base or mobile radio | 550 | **1,100** | Standard amateur UHF (e.g. Icom/Yaesu/Kenwood class); one path WR, one Perry — or dual-radio hub |
+| 1 | Spare ham UHF radio | 550 | **550** | Hot spare |
+| 2 | Power supply 13.8 V / 20–30 A | 120 | **240** | For base radios |
+| 2 | Ham Yagi 420–450 MHz (10–12 dBi class) | 120 | **240** | **Antenna hardware only** (install optional) |
+| 1 | Ham omni 70 cm (optional fill) | 90 | **90** | Portable / local |
+| 1 | Coax (LMR-400/9913), connectors, arrestors kit | 350 | **350** | Materials only |
+| 1 | Edge router / firewall (QoS, DHCP) | 250 | **250** | e.g. OpenWrt/OPNsense class mini |
+| 1 | Small managed or unmanaged GbE switch | 80 | **80** | Enclave LAN |
+| 1 | FreePBX host (mini PC / NUC-class) | 450 | **450** | On-prem Asterisk/FreePBX |
+| 1 | MeshChat + Citadel host (mini PC) | 400 | **400** | May share one host w/ FreePBX (−$400 if combined) |
+| 1 | UPS (small) | 200 | **200** | |
+| 2 | Continuity workstation / laptop | 500 | **1,000** | Softphone, MeshChat, Citadel web |
+| 2 | Softphone (software) or cheap SIP ATA | 40 | **80** | FreePBX endpoints |
+| 1 | USB/serial audio or radio-IT gateway kit | 200 | **200** | If bridging radio ↔ IP (AllStar/URI-class) as designed |
+| 1 | Cables, PDUs, labels, shelves | 150 | **150** | |
 
-**Hardware subtotal (EOC): $41,640**
+**Base hardware subtotal (EOC): $5,380**  
+*(If FreePBX + MeshChat + Citadel on **one** mini PC: **$4,980**)*
 
 ---
 
-## 2. Software & licenses (enclave)
+## 2. Base software (REQUIRED)
 
 | Qty | Item | Unit $ | Extended $ | Notes |
 |----:|------|-------:|-----------:|-------|
-| 1 | PBX software / support (Year 1) | 800 | **800** | Or included w/ appliance |
-| 1 | Chat server license / support (Year 1) | 500 | **500** | OSS ≈ $0 + support |
-| 1 | Internal mail / webmail (Year 1) | 400 | **400** | |
-| 1 | Frequency authorization / coordination fees | 1,500 | **1,500** | Highly variable |
+| 1 | **FreePBX** / Asterisk | 0 | **0** | OSS; support optional |
+| 1 | **MeshChat** | 0 | **0** | OSS / community |
+| 1 | **Citadel** (email/groupware) | 0 | **0** | OSS |
+| 1 | OS media / offline packages | 50 | **50** | Sneaker-net ISO/USB |
 
-**Software / auth subtotal (EOC): $3,200**
-
----
-
-## 3. Resources (labor)
-
-| Role | Hours | Rate $/hr | Extended $ | Tasks |
-|------|------:|----------:|-----------:|--------|
-| Project manager | 40 | 140 | **5,600** | Schedule, hospital coordination |
-| RF engineer | 48 | 160 | **7,680** | Path, antenna, radio config |
-| Network engineer | 56 | 150 | **8,400** | Router, DHCP, QoS, air gap, DNS/NTP |
-| Tower / mast crew | 64 | 180 | **11,520** | Climb/install (or contractor lump) |
-| Systems admin (apps) | 40 | 130 | **5,200** | PBX, chat, mail build |
-| Field tech | 32 | 95 | **3,040** | Cabling, grounding, test assist |
-| Documentation / training | 16 | 110 | **1,760** | As-builts, SOP handoff |
-
-**Labor subtotal (EOC): $43,200**
+**Base software subtotal (EOC): $50**
 
 ---
 
-## 4. Travel / misc
-
-| Item | Extended $ |
-|------|-----------:|
-| Contingency materials (5% of hardware) | **2,082** |
-| Permits / structural review allowance | **2,500** |
-
-**Misc subtotal (EOC): $4,582**
-
----
-
-## 5. EOC node total
+## 3. EOC BASE TOTAL (no antenna work, no labor)
 
 | Category | Amount $ |
 |----------|----------:|
-| Hardware & materials | 41,640 |
-| Software & authorization | 3,200 |
-| Labor / resources | 43,200 |
-| Misc / contingency | 4,582 |
-| **EOC NODE TOTAL** | **$92,622** |
-
-**Budget band:** ~**$65k–$120k** (mast reuse vs new tower dominates).
+| Hardware | 5,380 |
+| Software | 50 |
+| **EOC BASE TOTAL** | **$5,430** |
 
 ---
 
-## 6. Resource roster (who)
+## 4. Optional — Antenna hardware already in base
 
-| Resource | Count | Source |
-|----------|------:|--------|
-| Project manager | 1 | County IT / EMA or contractor |
-| RF engineer | 1 | Radio vendor or consultant |
-| Network engineer | 1 | County IT / contractor |
-| Tower crew | 2–3 | Licensed contractor |
-| Systems admin | 1 | EMA / IT |
-| Field tech | 1–2 | EMA / contractor |
+Yagis/omni/coax **materials** are in §1.  
+The following is **install / structural work only**.
+
+---
+
+## 5. OPTIONAL — Antenna work
+
+| Qty | Item | Unit $ | Extended $ | Notes |
+|----:|------|-------:|-----------:|-------|
+| 1 | Mast / tower attach or roof tripod allowance | 1,500 | **1,500** | Height still recommended for path |
+| 1 | Antenna crew — mount, aim, weatherseal (lump) | 2,200 | **2,200** | Climb/roof labor |
+| 1 | Grounding / polyphaser install labor | 400 | **400** | |
+| 1 | Structural / landlord review allowance | 800 | **800** | If required |
+
+**Optional antenna work (EOC): $4,900**
+
+---
+
+## 6. OPTIONAL — Labor / resources
+
+| Role | Hours | Rate $/hr | Extended $ | Tasks |
+|------|------:|----------:|-----------:|--------|
+| Project coordinator | 16 | 100 | **1,600** | Schedule, docs |
+| RF / radio tech | 24 | 95 | **2,280** | Radio program, aim assist |
+| Network / FreePBX admin | 32 | 110 | **3,520** | Router, DHCP, FreePBX, MeshChat, Citadel, air gap |
+| Field tech | 16 | 85 | **1,360** | Cabling, rack, test |
+| Training / handoff | 8 | 90 | **720** | User SOP |
+
+**Optional labor (EOC): $9,480**
+
+---
+
+## 7. Totals — choose package
+
+| Package | Amount $ |
+|---------|----------:|
+| **A — Base only** (radios, FreePBX, MeshChat, Citadel, LAN) | **$5,430** |
+| **B — Base + antenna work** | **$10,330** |
+| **C — Base + labor** | **$14,910** |
+| **D — Base + antenna work + labor (full)** | **$19,810** |
+
+---
+
+## 8. Application stack (EOC hosts)
+
+| App | Product | Host |
+|-----|---------|------|
+| VoIP | **FreePBX** | Mini PC @ EOC |
+| Chat | **MeshChat** | Mini PC @ EOC (or shared) |
+| Email | **Citadel** | Mini PC @ EOC (or shared) |

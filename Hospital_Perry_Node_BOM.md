@@ -4,108 +4,97 @@
 | Field | Value |
 |-------|--------|
 | Node | Emory Hospital Perry |
-| Band | 420–450 MHz air-gapped mesh |
+| Band | 420–450 MHz (**ham / 70 cm** radios) |
+| Apps (clients) | FreePBX softphone · MeshChat · Citadel webmail |
 | Enclave subnet (example) | `10.40.2.0/24` |
 | Estimate class | Planning / budgetary (±30%) |
 | Currency | USD |
 | Date | 2026-03-11 |
-| Related | `Hospital_Node_Configuration.md` |
 
-Prices are **planning figures**, not quotes. Labor is **loaded**. Optional WR↔Perry backup gear is **excluded** from the site total.
+**Base = gear only.** **Antenna work** and **labor** are **OPTIONAL**.
 
 ---
 
-## 1. Hardware & materials
+## 1. Base hardware (REQUIRED)
 
 | Qty | Item | Unit $ | Extended $ | Notes |
 |----:|------|-------:|-----------:|-------|
-| 1 | Roof mast (+20–40 ft; total 60–100 ft AGL) | 4,500 | **4,500** | Incl. mounts; hospital approval |
-| 1 | Yagi antenna 10–14 dBi (420–450 MHz) | 400 | **400** | Aimed at EOC |
-| 1 | 420–450 MHz outdoor mesh IP radio | 4,500 | **4,500** | Spoke node |
-| 1 | Hardline + polyphaser + grounding kit | 1,800 | **1,800** | Roof to closet |
-| 1 | Edge router / firewall (QoS, DHCP) | 1,500 | **1,500** | Enclave gateway |
-| 1 | Small managed PoE switch | 350 | **350** | Enclave VLAN only |
-| 1 | PoE / DC injector plant | 250 | **250** | |
-| 1 | UPS | 800 | **800** | |
-| 2 | Softphone or ATA | 120 | **240** | VoIP endpoints |
-| 2 | Continuity PC / thin client | 750 | **1,500** | Chat + webmail |
-| 1 | NEMA / roof penetration / weather kit | 700 | **700** | |
-| 1 | Labels, patch cords, PDU odds | 200 | **200** | |
+| 1 | Ham 70 cm / 420–450 MHz mobile or base radio | 550 | **550** | Standard amateur UHF |
+| 1 | Power supply 13.8 V (if base) | 120 | **120** | |
+| 1 | Ham Yagi 420–450 MHz (10–14 dBi class) | 130 | **130** | Materials; aim EOC |
+| 1 | Coax, connectors, arrestor kit | 220 | **220** | Materials only |
+| 1 | Edge router / firewall (QoS, DHCP) | 250 | **250** | Enclave gateway |
+| 1 | Small GbE switch | 60 | **60** | Enclave only |
+| 1 | Radio–IP interface kit (if used) | 200 | **200** | Match EOC design |
+| 1 | UPS (small) | 150 | **150** | |
+| 2 | Softphone or SIP ATA (FreePBX clients) | 40 | **80** | |
+| 2 | Continuity PC / thin client | 450 | **900** | MeshChat + Citadel |
+| 1 | Patch cords, labels, shelf | 80 | **80** | |
 
-**Hardware subtotal (Perry): $16,740**
+**Base hardware subtotal (Perry): $2,740**
 
-### Optional (not in site total)
+### Optional RF backup to WR (not in base)
 
-| Qty | Item | Unit $ | Extended $ | Notes |
-|----:|------|-------:|-----------:|-------|
-| 1 | 2nd Yagi toward WR | 400 | 400 | Backup hop |
-| 1 | 2nd mesh radio | 4,500 | 4,500 | Backup hop |
-
-**Optional backup add-on: $4,900** (exclude unless Phase D)
+| Qty | Item | Extended $ |
+|----:|------|-----------:|
+| 1 | Extra ham UHF radio + Yagi materials | **680** |
 
 ---
 
-## 2. Software & licenses
+## 2. Base software (REQUIRED)
 
-| Qty | Item | Unit $ | Extended $ | Notes |
-|----:|------|-------:|-----------:|-------|
-| 2 | Softphone licenses (Year 1) | 50 | **100** | If not free/bundle |
-| 1 | Hospital escort / Biomed coordination fee allowance | 1,000 | **1,000** | Internal or billed |
+| Qty | Item | Extended $ | Notes |
+|----:|------|-----------:|-------|
+| — | FreePBX / MeshChat / Citadel **clients** | **0** | Servers at EOC only |
+| 1 | Offline browser/client install media | **25** | |
 
-**Software / site fees subtotal (Perry): $1,100**
-
----
-
-## 3. Resources (labor)
-
-| Role | Hours | Rate $/hr | Extended $ | Tasks |
-|------|------:|----------:|-----------:|--------|
-| Project coordinator | 16 | 140 | **2,240** | Access, schedule w/ hospital |
-| RF engineer | 24 | 160 | **3,840** | Align, radio config, SNR |
-| Network engineer | 24 | 150 | **3,600** | Router, DHCP, QoS, air gap |
-| Roof / mast installer | 32 | 170 | **5,440** | Mast, coax, ground |
-| Field tech | 24 | 95 | **2,280** | Closet, endpoints, test |
-| Hospital Biomed/Facilities escort | 16 | 120 | **1,920** | Required access |
-| Training (continuity users) | 8 | 110 | **880** | Phone/chat/mail SOP |
-
-**Labor subtotal (Perry): $20,200**
+**Base software subtotal (Perry): $25**
 
 ---
 
-## 4. Travel / misc
-
-| Item | Extended $ |
-|------|-----------:|
-| Contingency (5% of hardware) | **837** |
-| Structural / roof engineering letter allowance | **2,000** |
-
-**Misc subtotal (Perry): $2,837**
-
----
-
-## 5. Perry node total
+## 3. Perry BASE TOTAL (no antenna work, no labor)
 
 | Category | Amount $ |
 |----------|----------:|
-| Hardware & materials | 16,740 |
-| Software & site fees | 1,100 |
-| Labor / resources | 20,200 |
-| Misc / contingency | 2,837 |
-| **PERRY NODE TOTAL** | **$40,877** |
-
-**Budget band:** ~**$30k–$55k**.  
-**With optional WR backup path:** ~**$45,777**
+| Hardware | 2,740 |
+| Software | 25 |
+| **PERRY BASE TOTAL** | **$2,765** |
 
 ---
 
-## 6. Resource roster (who)
+## 4. OPTIONAL — Antenna work
 
-| Resource | Count | Source |
-|----------|------:|--------|
-| Project coordinator | 1 | EMA / contractor |
-| RF engineer | 1 | Shared w/ EOC project |
-| Network engineer | 1 | Shared w/ EOC project |
-| Roof/mast crew | 2 | Contractor |
-| Field tech | 1 | Contractor / EMA |
-| Biomed / Facilities escort | 1 | Hospital |
-| End-user trainer | 1 | EMA |
+| Qty | Item | Extended $ | Notes |
+|----:|------|-----------:|-------|
+| 1 | Roof mast / tripod allowance | **1,200** | Height still recommended |
+| 1 | Antenna mount, aim, weatherseal labor | **1,800** | Roof crew |
+| 1 | Grounding install labor | **300** | |
+| 1 | Hospital roof / Biomed review allowance | **750** | |
+
+**Optional antenna work (Perry): $4,050**
+
+---
+
+## 5. OPTIONAL — Labor / resources
+
+| Role | Hours | Rate $/hr | Extended $ | Tasks |
+|------|------:|----------:|-----------:|--------|
+| Project coordinator | 8 | 100 | **800** | Access, schedule |
+| RF / radio tech | 12 | 95 | **1,140** | Program, align assist |
+| Network admin | 12 | 110 | **1,320** | Router, DHCP, air gap, clients |
+| Field tech | 12 | 85 | **1,020** | Closet, phones, PCs |
+| Hospital escort | 8 | 100 | **800** | Facilities/Biomed |
+| User training | 4 | 90 | **360** | FreePBX / MeshChat / Citadel |
+
+**Optional labor (Perry): $5,440**
+
+---
+
+## 6. Totals — choose package
+
+| Package | Amount $ |
+|---------|----------:|
+| **A — Base only** | **$2,765** |
+| **B — Base + antenna work** | **$6,815** |
+| **C — Base + labor** | **$8,205** |
+| **D — Base + antenna work + labor (full)** | **$12,255** |
