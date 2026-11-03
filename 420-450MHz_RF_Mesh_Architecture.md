@@ -6,8 +6,9 @@
 | Sites | EOC (Kathleen), Emory Hospital Warner Robins, Emory Hospital Perry |
 | Band | **420–450 MHz** (licensed / authorized UHF; coordinate exact channels) |
 | Topology | Hub-and-spoke RF mesh with optional cross-link |
-| Apps | VoIP, Chat, Email |
-| Version | 1.1 |
+| Isolation | **Air-gapped** — no Internet, cloud, or production-LAN dependency |
+| Apps | VoIP, Chat, Email (internal only) |
+| Version | 1.2 |
 | Date | 2026-03-11 |
 
 ---
@@ -20,18 +21,19 @@ Provide resilient, county-controlled IP connectivity among:
 2. **Emory Hospital Warner Robins** — 1601 Watson Blvd, Warner Robins, GA 31093  
 3. **Emory Hospital Perry** — 1120 Morningside Dr, Perry, GA 31069  
 
-for **voice (VoIP)**, **chat**, and **email** when commercial networks are degraded or unavailable.
+for **voice (VoIP)**, **chat**, and **email** on a **standalone air-gapped** network when commercial networks are degraded, unavailable, or must not be used.
 
 ---
 
 ## 2. Design Principles
 
-1. **EOC is the hub** — Kathleen sits between the hospitals; applications terminate/relay at the EOC.  
-2. **Directional RF on long hops** — Yagi (or sector) links for EOC↔hospital; not omni-to-omni for primary paths.  
-3. **Mesh for resilience** — fixed nodes can relay; optional WR↔Perry backup; portables may join via EOC omni.  
-4. **Bandwidth discipline** — 420–450 MHz UHF is capacity-limited; QoS protects voice; email is store-and-forward.  
-5. **RF is transport only** — SIP, chat, and mail are standard IP apps behind routers/VPN.  
-6. **Licensed / authorized operation** — FCC (or federal) authorization in **420–450 MHz**, EIRP limits, and coordination are mandatory.
+1. **Air-gapped enclave** — the mesh has **no** path to the public Internet, cellular/FirstNet data, Starlink, cloud SaaS, or hospital/county production LANs. All traffic stays on the three-site RF island.  
+2. **EOC is the hub** — Kathleen sits between the hospitals; applications terminate/relay **only** at the EOC.  
+3. **Directional RF on long hops** — Yagi (or sector) links for EOC↔hospital; not omni-to-omni for primary paths.  
+4. **Mesh for resilience** — fixed nodes can relay; optional WR↔Perry backup; portables may join via EOC omni **only if those portables are mesh-enclave devices**.  
+5. **Bandwidth discipline** — 420–450 MHz UHF is capacity-limited; QoS protects voice; email is store-and-forward.  
+6. **RF is transport only** — SIP, chat, and mail are standard IP apps on enclave routers (optional mesh-internal crypto).  
+7. **Licensed / authorized operation** — FCC (or federal) authorization in **420–450 MHz**, EIRP limits, and coordination are mandatory.
 
 ---
 
@@ -39,11 +41,12 @@ for **voice (VoIP)**, **chat**, and **email** when commercial networks are degra
 
 ```
                     ┌─────────────────────────────────────┐
-                    │     EOC Kathleen (HUB + APPS)        │
-                    │  SIP PBX · Chat · Mail Relay · NMS  │
-                    │  Edge Router (QoS/VPN) · UPS/Gen    │
+                    │  EOC Kathleen (HUB + APPS) AIR GAP  │
+                    │  SIP PBX · Chat · Mail · NMS        │
+                    │  Edge Router (QoS) · UPS/Gen        │
                     │  420–450 MHz Mesh Node              │
                     │  Yagi→WR | Yagi→Perry | Omni fill   │
+                    │  NO Internet / NO prod LAN bridge   │
                     └──────────────┬──────────────────────┘
                                    │
                  ┌─────────────────┼─────────────────┐
@@ -64,9 +67,9 @@ for **voice (VoIP)**, **chat**, and **email** when commercial networks are degra
 | **L0 Site** | Mast, grounding, power, weatherproofing |
 | **L1 RF Mesh** | 420–450 MHz IP mesh radios, antennas |
 | **L2/L3 Transport** | Bridged or routed mesh; site subnets |
-| **L4 Security** | Site-to-site VPN, firewall |
-| **L5 Apps** | SIP VoIP, chat, email |
-| **L6 Ops** | Monitoring, spares, SOP, training |
+| **L4 Security** | Enclave firewall; optional mesh-internal IPsec; **no** Internet gateway |
+| **L5 Apps** | On-prem SIP VoIP, chat, email (**internal only**) |
+| **L6 Ops** | Offline monitoring, spares, SOP, sneaker-net updates |
 
 ---
 
@@ -157,24 +160,33 @@ Assumes 5 W, ~11–12 dBi Yagis tuned for **420–450 MHz**, ~4.5 dB total line/
 | Emory WR | 10.40.1.0/24 | 10.40.10.0/28 |
 | Emory Perry | 10.40.2.0/24 | 10.40.10.0/28 |
 
-- Mesh cloud: single L2 broadcast domain **or** routed (/30 or OSPF/BGP-lite per vendor).  
-- **Recommended:** **routed** sites + VPN overlays (cleaner QoS and failure domains).
+- Mesh fabric: single L2 broadcast domain **or** routed (/30 or OSPF/BGP-lite per vendor).  
+- **Recommended:** **routed** sites + optional **mesh-internal** IPsec/WireGuard (enclave-only; no Internet peer).
 
 ### 6.2 Site edge kit (all three)
 
 1. 420–450 MHz mesh radio  
-2. Ethernet to **firewall/router** with QoS  
-3. Managed PoE switch (small)  
+2. Ethernet to **firewall/router** with QoS — **default-deny WAN/Internet**  
+3. Managed PoE switch (small) on **continuity enclave VLAN only**  
 4. UPS (EOC: UPS + generator preferred)  
-5. Time sync (NTP from EOC)
+5. Time sync from **EOC local NTP stratum** (no public NTP)
 
-### 6.3 Security
+### 6.3 Air gap & security
 
-- **IPsec or WireGuard** site-to-site (hospital ↔ EOC).  
-- No open management on RF SSID/mesh without auth.  
-- Separate **ops** and **user** VLANs where practical.  
-- Hospital traffic subject to **HIPAA** controls (encryption in transit, access logging).  
-- Do not bridge raw hospital EHR LANs onto the mesh — only designated continuity endpoints.
+**Air gap (hard rules)**  
+- **No** default route to the Internet, ISP, cellular modem, FirstNet data, or satellite backhaul on enclave routers.  
+- **No** cloud PBX, cloud chat, cloud email, or SaaS telemetry.  
+- **No** bridge/route to hospital EHR/clinical LAN, guest Wi‑Fi, or county enterprise Internet edge.  
+- Continuity endpoints are **dedicated** (or dedicated NIC/VLAN) devices that speak **only** to the mesh enclave.  
+- Software, patches, and threat intel enter only via **controlled removable media / approved data diode / sneaker-net** SOP — never automatic online update.  
+- Name resolution and certificates are **EOC-local** (internal CA optional).
+
+**On-mesh controls**  
+- Firewall each site; optional **IPsec/WireGuard** hospital ↔ EOC for confidentiality on the RF hop.  
+- Authenticated mesh/radio management; no open join.  
+- Separate **ops** and **user** VLANs inside the enclave where practical.  
+- PHI/sensitive content stays inside the air gap; apply hospital policy for what may be typed into chat/mail on this island.  
+- Do **not** bridge raw hospital production LANs onto the mesh.
 
 ---
 
@@ -184,10 +196,10 @@ Assumes 5 W, ~11–12 dBi Yagis tuned for **420–450 MHz**, ~4.5 dB total line/
 
 | Application | Primary host | Hospital clients |
 |-------------|--------------|------------------|
-| **SIP PBX / registrar** | EOC | Softphones or ATAs on continuity VLAN |
-| **Chat server** | EOC | Desktop/mobile clients on continuity VLAN |
-| **Email** | EOC mail relay / webmail | MUA or webmail via VPN |
-| **DNS / NTP** | EOC | Point hospitals at EOC |
+| **SIP PBX / registrar** | EOC (on-prem only) | Softphones or ATAs on enclave VLAN |
+| **Chat server** | EOC (on-prem only) | Desktop clients on enclave VLAN |
+| **Email** | EOC internal mail / webmail | Enclave-only accounts (no Internet SMTP) |
+| **DNS / NTP / CA** | EOC local | Hospitals use EOC only |
 
 ### 7.2 VoIP
 
@@ -208,7 +220,8 @@ Assumes 5 W, ~11–12 dBi Yagis tuned for **420–450 MHz**, ~4.5 dB total line/
 - **Store-and-forward** at EOC.  
 - Size limits (e.g. 1–5 MB); strip/block large attachments on RF path.  
 - Queue and send when voice load is low; never starve RTP.  
-- Optional: webmail only (less chatty than sync IMAP).
+- Optional: enclave webmail only (less chatty than sync IMAP).  
+- **No** outbound SMTP/IMAP to the public Internet.
 
 ### 7.5 QoS policy (edge routers)
 
@@ -216,7 +229,7 @@ Assumes 5 W, ~11–12 dBi Yagis tuned for **420–450 MHz**, ~4.5 dB total line/
 |----------|---------|-----------|
 | 1 | SIP + RTP | Highest / EF / reserved bandwidth |
 | 2 | Chat | Assured forwarding |
-| 3 | VPN/control / NMS | Assured |
+| 3 | Mesh crypto / control / NMS | Assured |
 | 4 | Email | Best effort / rate-limited |
 | 5 | Bulk / other | Lowest / blocked on RF |
 
@@ -229,7 +242,7 @@ Assumes 5 W, ~11–12 dBi Yagis tuned for **420–450 MHz**, ~4.5 dB total line/
 | VoIP (×3 calls) | ~24–40 kbps up/down each | ~100–150 kbps |
 | Chat | ~5–20 kbps | ~20 kbps |
 | Email | Bursty | Cap **50–100 kbps** when calls active |
-| Overhead (VPN, mesh, IP) | — | +20–40% |
+| Overhead (mesh crypto, IP) | — | +20–40% |
 
 **Minimum useful RF throughput:** ~**300–500 kbps** stable bidirectional per spoke for comfortable multi-service; **~100–150 kbps** absolute floor for 1 call + chat.
 
@@ -311,7 +324,8 @@ If licensed channel only supports tens of kbps: **1 VoIP + chat**; email off-pea
 | License / EIRP cap | Lower margin | Higher antennas/gain; lower data rate modes |
 | No eligible **420–450 MHz** channels | Cannot transmit legally | Confirm federal/FCC eligibility before procurement |
 | Mesh relay path | Latency hurts VoIP | Prefer hub paths; relay = chat/backup voice |
-| Security/HIPAA | Compliance failure | VPN, endpoint control, no raw LAN bridge |
+| Air-gap breach (Internet/prod LAN plugged in) | Enclave compromise | Locked configs, sealed ports, audit SOP |
+| Sensitive data on island | Policy/compliance failure | Enclave-only endpoints; no EHR bridge; training |
 
 ---
 
@@ -330,12 +344,13 @@ If licensed channel only supports tens of kbps: **1 VoIP + chat**; email off-pea
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Band | **420–450 MHz** authorized UHF | Range/foliage; fixed design band; county/federal control |
+| Band | **420–450 MHz** authorized UHF | Range/foliage; no Internet-dependent SAS/cloud spectrum |
 | Topology | EOC hub mesh | Geography; app centralization |
+| Isolation | **Air-gapped** | Continuity without Internet or prod LAN |
 | Antennas | Yagi primary | Link budget at 7–10 mi |
-| Apps host | EOC | One RF hop to services |
-| Email | Store-and-forward | Protect VoIP |
-| 5.8/CBRS | Out of scope here | Alternate if broadband added later |
+| Apps host | EOC on-prem | One RF hop; no cloud apps |
+| Email | Internal store-and-forward | Protect VoIP; no Internet mail |
+| 5.8/CBRS | Out of scope | Would not stay air-gapped if cloud/SAS required |
 
 ---
 
@@ -345,8 +360,22 @@ If licensed channel only supports tens of kbps: **1 VoIP + chat**; email off-pea
 - **≥ 2** concurrent narrowband VoIP calls hub-spoke with acceptable MOS.  
 - Chat usable during those calls.  
 - Email delivers via EOC queue without dropping calls.  
-- Documented SOP and weekly test completed.
+- Documented SOP and weekly test completed.  
+- **Air-gap verification:** no Internet route, no prod-LAN bridge, enclave-only name resolution and apps.
 
 ---
 
-*End of architecture — 420–450 MHz RF Mesh (3-site).*
+## 16. Air-Gap Verification Checklist
+
+- [ ] Enclave routers have **no** WAN/Internet next hop  
+- [ ] No cellular/satellite modem attached to mesh switches  
+- [ ] Hospital mesh switch **not** trunked to EHR/clinical core  
+- [ ] SIP, chat, mail resolvable **only** via EOC internal DNS  
+- [ ] NTP is EOC-local (or GPS-disciplined clock with no IP Internet)  
+- [ ] Patch/update SOP is offline media only  
+- [ ] Portables on omni are enclave-owned devices  
+- [ ] Periodic audit: `traceroute` / default-route review at each site  
+
+---
+
+*End of architecture — 420–450 MHz air-gapped RF Mesh (3-site).*

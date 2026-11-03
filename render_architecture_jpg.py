@@ -54,40 +54,40 @@ def bullet_block(x, y, lines, fnt, fill="#1E293B", line_h=20):
 
 d.text(
     (48, 28),
-    "Houston County 420-450 MHz RF Mesh — Component Architecture",
+    "Houston County 420-450 MHz RF Mesh — Component Architecture (AIR-GAPPED)",
     font=f_title,
     fill="#0F172A",
 )
 d.text(
     (48, 68),
-    "EOC Kathleen (Hub)  ·  Emory Hospital Warner Robins  ·  Emory Hospital Perry   |   VoIP · Chat · Email",
+    "EOC Kathleen (Hub)  ·  Emory Hospital Warner Robins  ·  Emory Hospital Perry   |   VoIP · Chat · Email (enclave only)",
     font=f_sub,
     fill=MUTED,
 )
 
-rounded_rect((48, 100, 1550, 148), "#EEF2FF", "#94A3B8", 1, 8)
+rounded_rect((48, 100, 1550, 148), "#FEF2F2", "#B91C1C", 2, 8)
 d.text(
     (64, 112),
-    "Band: 420-450 MHz (plan 435 MHz)     Primary: Yagi directed links     Optional: WR<->Perry backup + EOC omni for portables",
+    "AIR GAP: No Internet / cloud / cellular / prod-LAN bridge     Band 420-450 MHz     Primary Yagi links     Optional WR<->Perry backup",
     font=f_body,
-    fill="#1E293B",
+    fill="#7F1D1D",
 )
 
 # EOC hub
 rounded_rect((480, 180, 1120, 470), BOX_BG, EOC, 3, 14)
 d.rectangle((480, 180, 1120, 220), fill=EOC)
-text_center(800, 200, "EOC Kathleen — HUB + APPLICATIONS", f_site, "#FFFFFF")
+text_center(800, 200, "EOC Kathleen — HUB + APPS (AIR-GAPPED)", f_site, "#FFFFFF")
 
 rounded_rect((500, 240, 760, 340), "#ECFDF5", APP, 2, 10)
-d.text((515, 250), "Applications", font=f_label, fill=APP)
-bullet_block(515, 275, ["• SIP PBX / VoIP", "• Chat server", "• Mail relay / webmail"], f_small)
+d.text((515, 250), "Applications (on-prem)", font=f_label, fill=APP)
+bullet_block(515, 275, ["• SIP PBX / VoIP", "• Chat server", "• Internal mail only"], f_small)
 
 rounded_rect((780, 240, 1100, 340), "#F1F5F9", EDGE, 2, 10)
 d.text((795, 250), "Edge / Ops", font=f_label, fill=EDGE)
 bullet_block(
     795,
     275,
-    ["• Router / Firewall (QoS + VPN)", "• NMS / NTP / DNS", "• UPS + Generator"],
+    ["• Router/FW (QoS, no Internet)", "• Local NMS / NTP / DNS", "• UPS + Generator"],
     f_small,
 )
 
@@ -124,7 +124,7 @@ bullet_block(
 
 rounded_rect((80, 715, 500, 790), "#F1F5F9", EDGE, 2, 10)
 d.text((95, 725), "Edge", font=f_label, fill=EDGE)
-bullet_block(95, 750, ["• Router / Firewall (QoS + VPN)", "• UPS"], f_small)
+bullet_block(95, 750, ["• Router/FW (QoS, enclave only)", "• UPS"], f_small)
 
 rounded_rect((80, 805, 500, 880), "#ECFDF5", APP, 2, 10)
 d.text((95, 815), "Endpoints", font=f_label, fill=APP)
@@ -146,7 +146,7 @@ bullet_block(
 
 rounded_rect((1100, 715, 1520, 790), "#F1F5F9", EDGE, 2, 10)
 d.text((1115, 725), "Edge", font=f_label, fill=EDGE)
-bullet_block(1115, 750, ["• Router / Firewall (QoS + VPN)", "• UPS"], f_small)
+bullet_block(1115, 750, ["• Router/FW (QoS, enclave only)", "• UPS"], f_small)
 
 rounded_rect((1100, 805, 1520, 880), "#ECFDF5", APP, 2, 10)
 d.text((1115, 815), "Endpoints", font=f_label, fill=APP)
@@ -169,8 +169,8 @@ rounded_rect((60, 930, 1540, 1055), BOX_BG, "#94A3B8", 2, 12)
 d.text((80, 945), "Component Stack (each site)", font=f_label, fill="#0F172A")
 layers = [
     (80, "L5 Apps", "SIP · Chat · Email"),
-    (320, "L4 Security", "VPN · Firewall"),
-    (560, "L2/L3 IP", "Routed edge · QoS"),
+    (320, "L4 Security", "FW · no Internet"),
+    (560, "L2/L3 IP", "Enclave routed · QoS"),
     (800, "L1 RF Mesh", "420-450 MHz radio"),
     (1040, "L0 Physical", "Mast · Hardline · Ground"),
     (1280, "Traffic QoS", "1 VoIP  2 Chat  3 Email"),
