@@ -36,7 +36,8 @@ Configure the EOC as the **central node** of the three-site RF mesh so that:
 | MeshChat + Citadel host (or shared mini PC) | Chat & email |
 | Local DNS / NTP (may share app host) | Name & time |
 | UPS | Power survivability |
-| Continuity workstations | Softphone, MeshChat, Citadel clients |
+| **2× SIP VoIP desk phones** | FreePBX handsets (primary voice) |
+| Continuity workstations | MeshChat, Citadel; optional softphone backup |
 
 ---
 
@@ -63,7 +64,8 @@ Configure the EOC as the **central node** of the three-site RF mesh so that:
 | DNS / NTP / NMS | `10.40.0.13/24` | Static (or same as app host) |
 | Mesh link toward WR | `10.40.10.1/30` (example) | Static |
 | Mesh link toward Perry | `10.40.10.5/30` (example) | Static |
-| Workstations / softphones | `10.40.0.50–10.40.0.200` | **DHCP** |
+| SIP VoIP desk phones (2) | `10.40.0.50–10.40.0.200` | **DHCP** |
+| Workstations | `10.40.0.50–10.40.0.200` | **DHCP** |
 
 **DHCP pool on EOC router:** `10.40.0.50`–`10.40.0.200`  
 **Exclude from pool:** `10.40.0.1`–`10.40.0.49` (static gear)
@@ -131,7 +133,17 @@ NTP: `10.40.0.13` (EOC local — **no** public NTP)
 3. Codecs: prefer **Opus 16–24 kbps**, **G.729**, or ulaw only if bandwidth allows.  
 4. Bind SIP to enclave IP only.  
 5. Allow SIP/RTP only from `10.40.0.0/24`, `10.40.1.0/24`, `10.40.2.0/24`.  
-6. Test EOC softphone registration to FreePBX on LAN before RF tests.
+6. Create extensions **1001** and **1002** for EOC desk phones (match BOM).  
+7. Test EOC **SIP desk phone** registration to FreePBX on LAN before RF tests.
+
+### Step 5b — EOC SIP VoIP phones
+
+1. Connect each desk phone to the **enclave PoE switch** (or PoE injector).  
+2. Phone obtains IP by **DHCP** from EOC edge router.  
+3. Set SIP server: `pbx.mesh.local` or `10.40.0.10`.  
+4. Provision extension/secret for **1001** / **1002**.  
+5. Codec: G.729 or Opus if available; confirm dial tone and EOC↔EOC call on LAN.  
+6. Label phones “MESH ENCLAVE — FreePBX”.
 
 ### Step 6 — MeshChat
 
@@ -152,7 +164,7 @@ NTP: `10.40.0.13` (EOC local — **no** public NTP)
 
 1. Connect to enclave switch only.  
 2. Obtain DHCP address from EOC router **or** assign static in workstation range.  
-3. Softphone → register to FreePBX at `pbx.mesh.local` / `10.40.0.10`.  
+3. Confirm desk phones already registered (Step 5b); optional softphone as spare only.  
 4. Open **MeshChat** → `chat.mesh.local`.  
 5. Open **Citadel** → `mail.mesh.local`.  
 6. Confirm DNS is EOC-local only.
@@ -178,9 +190,9 @@ NTP: `10.40.0.13` (EOC local — **no** public NTP)
 
 ## 7. Acceptance tests (EOC-led)
 
-1. EOC softphone registers to **FreePBX**.  
+1. EOC **SIP desk phones** register to **FreePBX** (1001/1002).  
 2. Reach hospital peer IPs / radios when spokes are up.  
-3. Place VoIP call EOC ↔ WR and EOC ↔ Perry; check audio quality.  
+3. Place VoIP call **EOC desk phone ↔ WR desk phone** and **↔ Perry desk phone**; check audio quality.  
 4. **MeshChat** message EOC ↔ each hospital.  
 5. Send **Citadel** mail while a call is active — voice remains usable.  
 6. Confirm Citadel cannot send to public Internet.  

@@ -29,17 +29,17 @@
 | 1 | Ham omni 70 cm (optional fill) | 90 | **90** | Portable / local |
 | 1 | Coax (LMR-400/9913), connectors, arrestors kit | 350 | **350** | Materials only |
 | 1 | Edge router / firewall (QoS, DHCP) | 250 | **250** | e.g. OpenWrt/OPNsense class mini |
-| 1 | Small managed or unmanaged GbE switch | 80 | **80** | Enclave LAN |
+| 1 | Small PoE GbE switch (or switch + injectors) | 120 | **120** | Powers SIP phones |
 | 1 | FreePBX host (mini PC / NUC-class) | 450 | **450** | On-prem Asterisk/FreePBX |
 | 1 | MeshChat + Citadel host (mini PC) | 400 | **400** | May share one host w/ FreePBX (−$400 if combined) |
 | 1 | UPS (small) | 200 | **200** | |
-| 2 | Continuity workstation / laptop | 500 | **1,000** | Softphone, MeshChat, Citadel web |
-| 2 | Softphone (software) or cheap SIP ATA | 40 | **80** | FreePBX endpoints |
+| 2 | **SIP VoIP desk phones** (PoE) | 100 | **200** | FreePBX ext **1001, 1002** |
+| 2 | Continuity workstation / laptop | 500 | **1,000** | MeshChat, Citadel; optional softphone spare |
 | 1 | USB/serial audio or radio-IT gateway kit | 200 | **200** | If bridging radio ↔ IP (AllStar/URI-class) as designed |
 | 1 | Cables, PDUs, labels, shelves | 150 | **150** | |
 
-**Base hardware subtotal (EOC): $5,380**  
-*(If FreePBX + MeshChat + Citadel on **one** mini PC: **$4,980**)*
+**Base hardware subtotal (EOC): $5,460**  
+*(If FreePBX + MeshChat + Citadel on **one** mini PC: **$5,060**)*
 
 ---
 
@@ -60,9 +60,9 @@
 
 | Category | Amount $ |
 |----------|----------:|
-| Hardware | 5,380 |
+| Hardware | 5,460 |
 | Software | 50 |
-| **EOC BASE TOTAL** | **$5,430** |
+| **EOC BASE TOTAL** | **$5,510** |
 
 ---
 
@@ -104,17 +104,18 @@ The following is **install / structural work only**.
 
 | Package | Amount $ |
 |---------|----------:|
-| **A — Base only** (radios, FreePBX, MeshChat, Citadel, LAN) | **$5,430** |
-| **B — Base + antenna work** | **$10,330** |
-| **C — Base + labor** | **$14,910** |
-| **D — Base + antenna work + labor (full)** | **$19,810** |
+| **A — Base only** (radios, FreePBX, phones, MeshChat, Citadel, LAN) | **$5,510** |
+| **B — Base + antenna work** | **$10,410** |
+| **C — Base + labor** | **$14,990** |
+| **D — Base + antenna work + labor (full)** | **$19,890** |
 
 ---
 
 ## 8. Application stack (EOC hosts)
 
-| App | Product | Host |
-|-----|---------|------|
-| VoIP | **FreePBX** | Mini PC @ EOC |
+| App | Product | Host / endpoint |
+|-----|---------|-----------------|
+| VoIP server | **FreePBX** | Mini PC @ EOC |
+| VoIP handsets | SIP desk phones ×2 | Ext 1001, 1002 |
 | Chat | **MeshChat** | Mini PC @ EOC (or shared) |
 | Email | **Citadel** | Mini PC @ EOC (or shared) |

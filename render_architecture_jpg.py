@@ -80,7 +80,7 @@ text_center(800, 200, "EOC Kathleen — HUB + APPS (AIR-GAPPED)", f_site, "#FFFF
 
 rounded_rect((500, 240, 760, 340), "#ECFDF5", APP, 2, 10)
 d.text((515, 250), "Applications (on-prem)", font=f_label, fill=APP)
-bullet_block(515, 275, ["• SIP PBX / VoIP", "• Chat server", "• Internal mail only"], f_small)
+bullet_block(515, 275, ["• FreePBX + 2 SIP phones", "• MeshChat", "• Citadel mail"], f_small)
 
 rounded_rect((780, 240, 1100, 340), "#F1F5F9", EDGE, 2, 10)
 d.text((795, 250), "Edge / Ops", font=f_label, fill=EDGE)
@@ -128,7 +128,7 @@ bullet_block(95, 750, ["• Router/FW (QoS, enclave only)", "• UPS"], f_small)
 
 rounded_rect((80, 805, 500, 880), "#ECFDF5", APP, 2, 10)
 d.text((95, 815), "Endpoints", font=f_label, fill=APP)
-bullet_block(95, 840, ["• Softphone / ATA (VoIP)", "• Chat + webmail clients"], f_small)
+bullet_block(95, 840, ["• 2x SIP VoIP desk phones", "• MeshChat + Citadel PCs"], f_small)
 
 # Perry
 rounded_rect((1080, 560, 1540, 900), BOX_BG, PR, 3, 14)
@@ -150,7 +150,7 @@ bullet_block(1115, 750, ["• Router/FW (QoS, enclave only)", "• UPS"], f_smal
 
 rounded_rect((1100, 805, 1520, 880), "#ECFDF5", APP, 2, 10)
 d.text((1115, 815), "Endpoints", font=f_label, fill=APP)
-bullet_block(1115, 840, ["• Softphone / ATA (VoIP)", "• Chat + webmail clients"], f_small)
+bullet_block(1115, 840, ["• 2x SIP VoIP desk phones", "• MeshChat + Citadel PCs"], f_small)
 
 # Primary RF links
 d.line([(700, 470), (290, 560)], fill=RF, width=4)

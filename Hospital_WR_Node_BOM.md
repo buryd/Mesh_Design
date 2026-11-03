@@ -5,7 +5,7 @@
 |-------|--------|
 | Node | Emory Hospital Warner Robins |
 | Band | 420–450 MHz (**ham / 70 cm** radios) |
-| Apps (clients) | FreePBX softphone · MeshChat · Citadel webmail |
+| Apps (clients) | **SIP VoIP phones** · MeshChat · Citadel |
 | Enclave subnet (example) | `10.40.1.0/24` |
 | Estimate class | Planning / budgetary (±30%) |
 | Currency | USD |
@@ -24,14 +24,14 @@
 | 1 | Ham Yagi 420–450 MHz (10–14 dBi class) | 130 | **130** | Materials; aim EOC |
 | 1 | Coax, connectors, arrestor kit | 220 | **220** | Materials only |
 | 1 | Edge router / firewall (QoS, DHCP) | 250 | **250** | Enclave gateway |
-| 1 | Small GbE switch | 60 | **60** | Enclave only |
+| 1 | Small PoE GbE switch (or + injectors) | 100 | **100** | Enclave + phones |
 | 1 | Radio–IP interface kit (if used) | 200 | **200** | Match EOC design |
 | 1 | UPS (small) | 150 | **150** | |
-| 2 | Softphone or SIP ATA (FreePBX clients) | 40 | **80** | |
+| 2 | **SIP VoIP desk phones** (PoE) | 100 | **200** | FreePBX ext **2001, 2002** |
 | 2 | Continuity PC / thin client | 450 | **900** | MeshChat + Citadel |
 | 1 | Patch cords, labels, shelf | 80 | **80** | |
 
-**Base hardware subtotal (WR): $2,740**
+**Base hardware subtotal (WR): $2,900**
 
 ### Optional RF backup to Perry (not in base)
 
@@ -56,9 +56,9 @@
 
 | Category | Amount $ |
 |----------|----------:|
-| Hardware | 2,740 |
+| Hardware | 2,900 |
 | Software | 25 |
-| **WR BASE TOTAL** | **$2,765** |
+| **WR BASE TOTAL** | **$2,925** |
 
 ---
 
@@ -94,7 +94,7 @@
 
 | Package | Amount $ |
 |---------|----------:|
-| **A — Base only** | **$2,765** |
-| **B — Base + antenna work** | **$6,815** |
-| **C — Base + labor** | **$8,205** |
-| **D — Base + antenna work + labor (full)** | **$12,255** |
+| **A — Base only** | **$2,925** |
+| **B — Base + antenna work** | **$6,975** |
+| **C — Base + labor** | **$8,365** |
+| **D — Base + antenna work + labor (full)** | **$12,415** |

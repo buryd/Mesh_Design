@@ -8,8 +8,9 @@
 | Topology | Hub-and-spoke RF mesh with optional cross-link |
 | Isolation | **Air-gapped** — no Internet, cloud, or production-LAN dependency |
 | Apps | **FreePBX** · **MeshChat** · **Citadel** (internal only) |
-| Version | 1.3 |
+| Version | 1.4 |
 | Date | 2026-03-11 |
+| Handsets | **SIP VoIP desk phones** at EOC and both hospitals (FreePBX) |
 
 ---
 
@@ -56,9 +57,20 @@ for **voice (VoIP)**, **chat**, and **email** on a **standalone air-gapped** net
     │ Emory Warner Robins│        │      │   Emory Perry      │
     │ Mesh Node + Router │◄───────┴─────►│ Mesh Node + Router │
     │ Yagi → EOC         │  optional     │ Yagi → EOC         │
-    │ Softphone / Chat   │  backup hop   │ Softphone / Chat   │
+    │ SIP phones+Chat/PC │  backup hop   │ SIP phones+Chat/PC │
     └────────────────────┘  ~15–20 mi    └────────────────────┘
 ```
+
+### VoIP handset placement
+
+| Site | SIP desk phones | FreePBX extensions (example) | Role |
+|------|----------------:|------------------------------|------|
+| EOC Kathleen | **2** | 1001, 1002 | Ops / watch desk |
+| Emory Warner Robins | **2** | 2001, 2002 | Continuity positions |
+| Emory Perry | **2** | 3001, 3002 | Continuity positions |
+| **Total** | **6** | — | All register to FreePBX @ EOC |
+
+Softphones on workstations remain **optional backup**, not a substitute for the desk phones.
 
 ### Logical layers
 
@@ -195,19 +207,22 @@ Assumes 5 W, ~11–12 dBi Yagis tuned for **420–450 MHz**, ~4.5 dB total line/
 
 | Application | Primary host | Hospital clients |
 |-------------|--------------|------------------|
-| **FreePBX** | EOC (on-prem only) | Softphones or ATAs on enclave VLAN |
+| **FreePBX** | EOC (on-prem only) | **SIP desk phones** (+ optional softphone) on enclave VLAN |
 | **MeshChat** | EOC (on-prem only) | Browser/clients on enclave VLAN |
 | **Citadel** | EOC (on-prem only) | Enclave-only mail (no Internet SMTP) |
 | **DNS / NTP / CA** | EOC local | Hospitals use EOC only |
 
-### 7.2 VoIP — FreePBX
+### 7.2 VoIP — FreePBX + SIP desk phones
 
 - Platform: **FreePBX** (Asterisk) at EOC.  
-- Codec: **Opus 16–24 kbps** or **G.729**.  
+- Handsets: **PoE SIP desk phones** (6 total — 2 per site); provisioned as FreePBX extensions.  
+- Phones get IP via **site edge-router DHCP**; SIP server = `pbx.mesh.local` / `10.40.0.10`.  
+- Codec on phones: **G.729** or **Opus** if supported; else G.711 only for local EOC-LAN tests — prefer compressed for RF.  
 - Concurrent calls: design for **1–3** on ham UHF paths.  
-- QoS: DSCP **EF** for RTP; prioritize SIP signaling.  
-- Media: prefer **hospital phone ↔ FreePBX** (one RF hop).  
-- Survivability: FreePBX host on UPS.
+- QoS: DSCP **EF** for RTP; prioritize SIP signaling on enclave routers.  
+- Call flow: **hospital SIP phone → RF → FreePBX @ EOC →** ringing EOC (or other hospital) SIP phone.  
+- Survivability: FreePBX host + phones on UPS/PoE where practical.  
+- Optional: softphone on continuity PC as spare if a desk phone fails.
 
 ### 7.3 Chat — MeshChat
 
@@ -255,16 +270,18 @@ If licensed channel only supports tens of kbps: **1 VoIP + chat**; email off-pea
 
 - Mast/tower **100–150 ft AGL**  
 - 2× Yagi (WR + Perry) + optional omni  
-- Mesh node, core router/firewall, SIP + chat + mail, NMS  
-- UPS + generator circuit  
-- Spares: 1 radio, 1 Yagi, injectors, cables  
+- Ham radios, core router/firewall, FreePBX + MeshChat + Citadel, NMS  
+- **2× SIP VoIP desk phones**  
+- UPS  
+- Spares: 1 radio, injectors, cables  
 
 ### 9.2 Emory WR & Emory Perry (spokes)
 
 - Roof + mast **60–100 ft AGL** total  
 - 1× Yagi to EOC (optional 2nd Yagi toward other hospital for backup)  
-- Mesh node, edge router, UPS  
-- Continuity workstation(s): softphone + chat + webmail  
+- Ham radio, edge router, PoE switch, UPS  
+- **2× SIP VoIP desk phones** (FreePBX clients)  
+- Continuity PC(s): MeshChat + Citadel (+ optional softphone backup)  
 - Biomed/Facilities-approved mount and grounding  
 
 ---
@@ -305,7 +322,8 @@ If licensed channel only supports tens of kbps: **1 VoIP + chat**; email off-pea
 | 3 | UPS (small) |
 | Lot | Coax, grounding, arrestors; **antenna install optional** per BOM |
 | 1–2 | Mini PCs: **FreePBX**, **MeshChat**, **Citadel** (may share) |
-| Lot | Softphones/ATAs + client PCs |
+| 6 | **SIP VoIP desk phones** (2 per site) |
+| Lot | Continuity PCs (MeshChat/Citadel); optional softphone spare |
 | 1 | NMS / logging (optional) |
 
 *See priced BOMs: antenna work and labor are optional; apps are FreePBX / MeshChat / Citadel.*

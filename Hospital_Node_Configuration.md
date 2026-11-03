@@ -18,7 +18,7 @@ Use this procedure at **both** hospital sites. Only the **subnet, aiming azimuth
 
 Configure each hospital so that:
 
-- Continuity **FreePBX softphones, MeshChat, and Citadel** clients join a **hospital enclave subnet**  
+- Continuity **SIP VoIP desk phones**, **MeshChat**, and **Citadel** clients join a **hospital enclave subnet**  
 - That subnet reaches **EOC-hosted FreePBX / MeshChat / Citadel** over the RF mesh  
 - The hospital node **never** bridges into EHR/clinical LAN, guest Wi‑Fi, or the Internet  
 
@@ -49,8 +49,8 @@ Hospitals **do not** host FreePBX, MeshChat, or Citadel servers — they host **
 | Edge router / firewall | Gateway, **DHCP**, QoS, air gap |
 | Small GbE switch | Enclave VLAN only |
 | UPS | Power |
-| Softphones / ATAs | **FreePBX** clients |
-| PCs / thin clients | **MeshChat** + **Citadel** |
+| **2× SIP VoIP desk phones** | **FreePBX** handsets (primary voice) |
+| PCs / thin clients | **MeshChat** + **Citadel** (+ optional softphone spare) |
 | Optional 2nd ham radio + Yagi | Only if WR↔Perry backup path is built |
 
 ---
@@ -75,7 +75,8 @@ Hospitals **do not** host FreePBX, MeshChat, or Citadel servers — they host **
 | Edge router LAN gateway | `10.40.1.1/24` | Static |
 | Mesh radio (LAN side) | `10.40.1.2/24` | Static |
 | Mesh link to EOC | `10.40.10.2/30` | Static |
-| Softphones / ATAs / PCs | `10.40.1.50`–`10.40.1.200` | **DHCP from edge router** |
+| SIP VoIP phones (2) + PCs | `10.40.1.50`–`10.40.1.200` | **DHCP from edge router** |
+| FreePBX extensions (example) | 2001, 2002 | Static extension IDs on FreePBX |
 
 ### 5.2 Emory Perry (`10.40.2.0/24`)
 
@@ -84,7 +85,8 @@ Hospitals **do not** host FreePBX, MeshChat, or Citadel servers — they host **
 | Edge router LAN gateway | `10.40.2.1/24` | Static |
 | Mesh radio (LAN side) | `10.40.2.2/24` | Static |
 | Mesh link to EOC | `10.40.10.6/30` | Static |
-| Softphones / ATAs / PCs | `10.40.2.50`–`10.40.2.200` | **DHCP from edge router** |
+| SIP VoIP phones (2) + PCs | `10.40.2.50`–`10.40.2.200` | **DHCP from edge router** |
+| FreePBX extensions (example) | 3001, 3002 | Static extension IDs on FreePBX |
 
 **DHCP options (both sites):**  
 - Gateway = site `.1`  
@@ -141,14 +143,16 @@ Hospitals **do not** host FreePBX, MeshChat, or Citadel servers — they host **
 3. **Do not** uplink this VLAN to hospital core / EHR.  
 4. Label ports clearly.
 
-### Step 5 — FreePBX phones / ATAs
+### Step 5 — SIP VoIP desk phones (FreePBX)
 
-1. Connect phone to enclave switch.  
-2. Phone obtains IP by **DHCP from hospital edge router** (or rare static in client range).  
-3. Set SIP server to **FreePBX**: `pbx.mesh.local` or `10.40.0.10`.  
-4. Enter extension/credentials issued by EOC.  
-5. Codec preference: Opus or G.729.  
-6. Verify registration **through RF** to EOC FreePBX (not to any hospital PBX).
+1. Install **two** PoE SIP desk phones at labeled continuity positions.  
+2. Connect each phone to the **enclave switch** (PoE port or injector) — never to hospital production LAN.  
+3. Phone obtains IP by **DHCP from hospital edge router**.  
+4. Set SIP server to **FreePBX**: `pbx.mesh.local` or `10.40.0.10`.  
+5. Provision extensions: **WR 2001/2002** or **Perry 3001/3002** (credentials from EOC).  
+6. Codec preference: G.729 or Opus; disable unnecessary phone apps/Internet provisioning URLs.  
+7. Verify registration **through RF** to EOC FreePBX; place test call to EOC **1001**.  
+8. Label phones “MESH ENCLAVE — FreePBX”.
 
 ### Step 6 — MeshChat & Citadel clients
 
@@ -191,14 +195,14 @@ Hospital gear = **clients + edge router + ham radio + switch + UPS**.
 - [ ] Phone DNS = EOC `10.40.0.13`  
 - [ ] Cannot browse public websites from enclave PC  
 - [ ] Cannot reach hospital clinical subnets from enclave PC  
-- [ ] Softphone registers to EOC **FreePBX** only  
+- [ ] Both SIP desk phones register to EOC **FreePBX** only  
 
 ---
 
 ## 9. Acceptance tests (per hospital)
 
 1. Ping EOC gateway `10.40.0.1` and FreePBX `10.40.0.10`.  
-2. Softphone registers; call EOC continuity phone.  
+2. Both desk phones register; call EOC continuity phone (**1001**).  
 3. Second call while **MeshChat** message sent — voice stays usable.  
 4. Send **Citadel** mail to EOC mailbox; confirm delivery; confirm **no** Internet send.  
 5. Fail RF briefly — document recovery when link returns.  
@@ -223,16 +227,19 @@ Hospital gear = **clients + edge router + ham radio + switch + UPS**.
 
 ---
 
-## 11. Quick reference — DHCP for a hospital VoIP phone
+## 11. Quick reference — hospital SIP VoIP phone
 
 ```text
-Phone → Enclave switch → Hospital edge router (DHCP)
-                              ↓
-                     IP from 10.40.x.50–200
-                     GW  = 10.40.x.1
-                     DNS = 10.40.0.13 (EOC)
-                              ↓
-                     SIP register → 10.40.0.10 (FreePBX @ EOC) via ham UHF / IP path
+SIP desk phone → Enclave PoE switch → Hospital edge router (DHCP)
+                                         ↓
+                                IP from 10.40.x.50–200
+                                GW  = 10.40.x.1
+                                DNS = 10.40.0.13 (EOC)
+                                         ↓
+                                SIP register → FreePBX 10.40.0.10
+                                Ext WR 2001/2002 or Perry 3001/3002
+                                         ↓
+                                Audio RTP over ham UHF / IP path to EOC
 ```
 
 ---
