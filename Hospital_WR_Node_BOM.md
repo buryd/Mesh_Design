@@ -10,6 +10,7 @@
 | Estimate class | Planning / budgetary (±30%) |
 | Currency | USD |
 | Date | 2026-03-11 |
+| Related | [Hospital Config](Hospital_Node_Configuration.md) · [BOM Totals](BOM_Totals.md) · [EOC BOM](EOC_Node_BOM.md) |
 
 **Base = gear only.** **Antenna work** and **labor** are **OPTIONAL**.
 
@@ -43,10 +44,10 @@
 
 ## 2. Base software (REQUIRED)
 
-| Qty | Item | Extended $ | Notes |
-|----:|------|-----------:|-------|
-| — | FreePBX / MeshChat / Citadel **clients** | **0** | Servers at EOC only |
-| 1 | Offline browser/client install media | **25** | |
+| Qty | Item | Extended $ | Resource |
+|----:|------|-----------:|----------|
+| — | FreePBX / MeshChat / Citadel **clients** | **0** | Servers at EOC — see [EOC BOM resources](EOC_Node_BOM.md#9-resource-hyperlinks) |
+| 1 | Offline browser/client install media | **25** | Softphone optional: [Linphone](https://www.linphone.org/) |
 
 **Base software subtotal (WR): $25**
 
@@ -98,3 +99,22 @@
 | **B — Base + antenna work** | **$6,975** |
 | **C — Base + labor** | **$8,365** |
 | **D — Base + antenna work + labor (full)** | **$12,415** |
+
+---
+
+## 7. Resource hyperlinks
+
+| Resource | URL |
+|----------|-----|
+| FreePBX (EOC server) | https://www.freepbx.org/ |
+| MeshChat | https://github.com/kn6plv/meshchat |
+| Citadel | https://www.citadel.org/ |
+| Example SIP phones | https://www.grandstream.com/products/ip-voices-telephony/ip-phones |
+| Optional softphone | https://www.linphone.org/ |
+| Ham gear (example vendor) | https://www.hamradio.com/ |
+| Coax/antennas (example) | https://www.dxengineering.com/ |
+| FCC Part 97 | https://www.ecfr.gov/current/title-47/chapter-I/subchapter-D/part-97 |
+| Hospital config | [Hospital_Node_Configuration.md](Hospital_Node_Configuration.md) |
+| EOC BOM + full software links | [EOC_Node_BOM.md](EOC_Node_BOM.md) |
+| Program totals | [BOM_Totals.md](BOM_Totals.md) |
+| Perry BOM | [Hospital_Perry_Node_BOM.md](Hospital_Perry_Node_BOM.md) |

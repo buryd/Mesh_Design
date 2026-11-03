@@ -9,7 +9,7 @@
 | Estimate class | Planning / budgetary (±30%) |
 | Currency | USD |
 | Date | 2026-03-11 |
-| Related | `EOC_Node_Configuration.md`, `BOM_Totals.md` |
+| Related | [EOC Node Configuration](EOC_Node_Configuration.md) · [BOM Totals](BOM_Totals.md) · [Architecture](420-450MHz_RF_Mesh_Architecture.md) |
 
 **Base total = hardware + software hosts only.**  
 **Antenna work** and **labor** are **OPTIONAL** add-ons (see §5–§6).
@@ -45,12 +45,12 @@
 
 ## 2. Base software (REQUIRED)
 
-| Qty | Item | Unit $ | Extended $ | Notes |
-|----:|------|-------:|-----------:|-------|
-| 1 | **FreePBX** / Asterisk | 0 | **0** | OSS; support optional |
-| 1 | **MeshChat** | 0 | **0** | OSS / community |
-| 1 | **Citadel** (email/groupware) | 0 | **0** | OSS |
-| 1 | OS media / offline packages | 50 | **50** | Sneaker-net ISO/USB |
+| Qty | Item | Unit $ | Extended $ | Resource |
+|----:|------|-------:|-----------:|----------|
+| 1 | **FreePBX** / Asterisk | 0 | **0** | [freepbx.org](https://www.freepbx.org/) · [Downloads](https://www.freepbx.org/downloads/) |
+| 1 | **MeshChat** | 0 | **0** | [MeshChat (kn6plv)](https://github.com/kn6plv/meshchat) · [AREDN notes](https://www.arednmesh.org/content/meshchat-installation-help) |
+| 1 | **Citadel** (email/groupware) | 0 | **0** | [citadel.org](https://www.citadel.org/) · [Download](https://www.citadel.org/download.html) |
+| 1 | Linux OS (Debian/Ubuntu) offline media | 50 | **50** | [Debian](https://www.debian.org/download) · [Ubuntu Server](https://ubuntu.com/download/server) |
 
 **Base software subtotal (EOC): $50**
 
@@ -113,9 +113,46 @@ The following is **install / structural work only**.
 
 ## 8. Application stack (EOC hosts)
 
-| App | Product | Host / endpoint |
-|-----|---------|-----------------|
-| VoIP server | **FreePBX** | Mini PC @ EOC |
-| VoIP handsets | SIP desk phones ×2 | Ext 1001, 1002 |
-| Chat | **MeshChat** | Mini PC @ EOC (or shared) |
-| Email | **Citadel** | Mini PC @ EOC (or shared) |
+| App | Product | Host / endpoint | Resource |
+|-----|---------|-----------------|----------|
+| VoIP server | **FreePBX** | Mini PC @ EOC (Linux) | [FreePBX](https://www.freepbx.org/) |
+| VoIP handsets | SIP desk phones ×2 | Ext 1001, 1002 | [Grandstream IP phones](https://www.grandstream.com/products/ip-voices-telephony/ip-phones) (example) |
+| Chat | **MeshChat** | Mini PC @ EOC (or shared) | [MeshChat GitHub](https://github.com/kn6plv/meshchat) |
+| Email | **Citadel** | Mini PC @ EOC (or shared) | [Citadel](https://www.citadel.org/) |
+
+---
+
+## 9. Resource hyperlinks
+
+### Software & OS
+| Resource | URL |
+|----------|-----|
+| FreePBX home | https://www.freepbx.org/ |
+| FreePBX downloads | https://www.freepbx.org/downloads/ |
+| FreePBX wiki / docs | https://wiki.freepbx.org/ |
+| MeshChat (current packages) | https://github.com/kn6plv/meshchat |
+| MeshChat install help (AREDN) | https://www.arednmesh.org/content/meshchat-installation-help |
+| Citadel home | https://www.citadel.org/ |
+| Citadel download | https://www.citadel.org/download.html |
+| Debian ISO | https://www.debian.org/download |
+| Ubuntu Server | https://ubuntu.com/download/server |
+
+### Networking & RF (examples)
+| Resource | URL |
+|----------|-----|
+| OPNsense (edge firewall example) | https://opnsense.org/ |
+| OpenWrt | https://openwrt.org/ |
+| Ham Radio Outlet (radios/antennas) | https://www.hamradio.com/ |
+| DX Engineering (coax/antennas) | https://www.dxengineering.com/ |
+| Grandstream IP phones (SIP example) | https://www.grandstream.com/products/ip-voices-telephony/ip-phones |
+| FCC Part 97 (amateur radio) | https://www.ecfr.gov/current/title-47/chapter-I/subchapter-D/part-97 |
+
+### Project docs
+| Doc | Link |
+|-----|------|
+| Architecture | [420-450MHz_RF_Mesh_Architecture.md](420-450MHz_RF_Mesh_Architecture.md) |
+| EOC configuration | [EOC_Node_Configuration.md](EOC_Node_Configuration.md) |
+| Hospital configuration | [Hospital_Node_Configuration.md](Hospital_Node_Configuration.md) |
+| Program totals | [BOM_Totals.md](BOM_Totals.md) |
+| WR BOM | [Hospital_WR_Node_BOM.md](Hospital_WR_Node_BOM.md) |
+| Perry BOM | [Hospital_Perry_Node_BOM.md](Hospital_Perry_Node_BOM.md) |

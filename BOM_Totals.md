@@ -13,7 +13,7 @@
 | Currency | USD |
 | Date | 2026-03-11 |
 
-Detail: `EOC_Node_BOM.md`, `Hospital_WR_Node_BOM.md`, `Hospital_Perry_Node_BOM.md`
+Detail: [EOC BOM](EOC_Node_BOM.md) · [WR BOM](Hospital_WR_Node_BOM.md) · [Perry BOM](Hospital_Perry_Node_BOM.md)
 
 ---
 
@@ -73,20 +73,59 @@ All phones: PoE → enclave switch → DHCP from site edge router → register t
 
 ## 5. Application stack (cost)
 
-| App | Product | License $ | Where |
-|-----|---------|----------:|-------|
-| VoIP server | **FreePBX** | 0 | EOC server |
-| VoIP handsets | SIP desk phones ×6 | ~600 | 2 per site |
-| Chat | **MeshChat** | 0 | EOC server |
-| Email | **Citadel** | 0 | EOC server |
-| Spare | Optional softphone | 0 | Continuity PC |
+| App | Product | License $ | Where | Resource |
+|-----|---------|----------:|-------|----------|
+| VoIP server | **FreePBX** | 0 | EOC Linux mini PC | [freepbx.org](https://www.freepbx.org/) |
+| VoIP handsets | SIP desk phones ×6 | ~600 | 2 per site | [Grandstream IP phones](https://www.grandstream.com/products/ip-voices-telephony/ip-phones) (example) |
+| Chat | **MeshChat** | 0 | EOC server | [GitHub kn6plv/meshchat](https://github.com/kn6plv/meshchat) |
+| Email | **Citadel** | 0 | EOC server | [citadel.org](https://www.citadel.org/) |
+| Spare | Optional softphone | 0 | Continuity PC | [Linphone](https://www.linphone.org/) |
 
 ---
 
-## 6. Notes
+## 6. Resource hyperlinks (master)
+
+### Software
+| Resource | URL |
+|----------|-----|
+| FreePBX | https://www.freepbx.org/ |
+| FreePBX downloads | https://www.freepbx.org/downloads/ |
+| FreePBX wiki | https://wiki.freepbx.org/ |
+| MeshChat packages | https://github.com/kn6plv/meshchat |
+| MeshChat / AREDN install notes | https://www.arednmesh.org/content/meshchat-installation-help |
+| Citadel | https://www.citadel.org/ |
+| Citadel download | https://www.citadel.org/download.html |
+| Debian | https://www.debian.org/download |
+| Ubuntu Server | https://ubuntu.com/download/server |
+| Linphone (optional softphone) | https://www.linphone.org/ |
+
+### Hardware / RF / network (examples)
+| Resource | URL |
+|----------|-----|
+| OPNsense | https://opnsense.org/ |
+| OpenWrt | https://openwrt.org/ |
+| Ham Radio Outlet | https://www.hamradio.com/ |
+| DX Engineering | https://www.dxengineering.com/ |
+| Grandstream SIP phones | https://www.grandstream.com/products/ip-voices-telephony/ip-phones |
+| FCC Part 97 | https://www.ecfr.gov/current/title-47/chapter-I/subchapter-D/part-97 |
+
+### Project documents
+| Doc | Link |
+|-----|------|
+| Architecture | [420-450MHz_RF_Mesh_Architecture.md](420-450MHz_RF_Mesh_Architecture.md) |
+| EOC configuration | [EOC_Node_Configuration.md](EOC_Node_Configuration.md) |
+| Hospital configuration | [Hospital_Node_Configuration.md](Hospital_Node_Configuration.md) |
+| EOC BOM | [EOC_Node_BOM.md](EOC_Node_BOM.md) |
+| WR BOM | [Hospital_WR_Node_BOM.md](Hospital_WR_Node_BOM.md) |
+| Perry BOM | [Hospital_Perry_Node_BOM.md](Hospital_Perry_Node_BOM.md) |
+
+---
+
+## 7. Notes
 
 1. Antenna **materials** stay in **base**; antenna **install/mast labor** is optional.  
 2. Labor section is fully optional.  
 3. Desk phones are **in base** (required), not optional.  
 4. Confirm **Part 97** (or other) authority before RF transmit on 420–450 MHz.  
 5. Prefer G.729/Opus on phones for RF; keep Citadel attachments small.  
+6. Vendor links are **examples** for sourcing — not sole-source requirements.  
